@@ -1,2 +1,2 @@
-# styleguide
-Coding style guidelines for some languages used by mySidewalk internal team
+# mySidewalk Javascript Style Guide
+Coding style guide for javascript coding at mySidewalk
