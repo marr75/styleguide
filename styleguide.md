@@ -137,7 +137,7 @@ When possible, directives should not use isolate scope.
 
 **ControllerAs rather than $scope**
 
-A new instance of a controller function is created each time it is used. In this way it represents a constructor function. Controller's should bind to the instance of the controller rather than `$scope` when available.
+A new instance of a controller function is created each time it is used. In this way it represents a constructor function. Controllers should bind to the instance of the controller rather than `$scope` when available.
 
 We try to leverage Angular's `controllerAs` property when declaring directives and routes. This provides an alias for the scope that the instance of the controller is published under rather than using the `$scope` object for binding.
 
