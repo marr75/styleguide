@@ -120,9 +120,9 @@ A route along with it's controller can be a module, a factory can be a module, a
 
 **Resolutions**
 
-Route resolutions, properties of the `resolve` object in a route's configuration, run logic on entrance of a new view or route. They can be particularly useful if most of your controller logic depends on data returned from the api, protecting from repeated code, watchers, and logic wrapped in callbacks. We generally write a single service that corresponsds to a single `resolve` property. Be mindful that a view will not render until all of its resolutions are resolved, so keep resolution services slim, and only return the data you need. Requests for data that can wait until the view is rendered are best kept in a controller.
+Route resolutions, properties of the `resolve` object in a route's configuration, run logic on entrance of a new view or route. They are particularly useful if most of your controller logic depends on data returned from the api, protecting from repeated code, watchers, and large chunks of logic wrapped in callbacks. Be mindful that a view will not render until all of its resolutions are resolved, so keep resolutions and their services slim, and only return the data you need. Requests for data that can wait until the view is rendered are best kept in a controller.
 
-Generally, the data resolved takes the name of the resolve service, suffixed with `Data`.
+We generally write a single service that corresponds to a single `resolve` property. Alternatively, a single function can be called and returned as the resolve's value, such as `User.get()`. The resolved injectable is typically prefixed with an underscore, or takes the name of the resolve service, suffixed with `Data`.
 
 ``` javascript
 // GOOD slim service, slim resolve
@@ -150,15 +150,19 @@ $routeProvider
     resolve: {
       UserResolveData: ['UserResolve', function(UserResolve) {
         return UserResolve();
+      }],
+      _Organizations: ['Organization', function(Organization) {
+        return Organization.list();
       }]
     }
   })
   
-.controller('SomeCtrl', ['UserResolveData',
-  function(UserResolveData) {
+.controller('SomeCtrl', ['UserResolveData', '_Organizations',
+  function(UserResolveData, _Organizations) {
     var ctrl = this;
     // Yay! I have already have data!
     ctrl.user = UserResolveData;
+    ctrl.organizations = _Organizations;
   }
 ])
   
