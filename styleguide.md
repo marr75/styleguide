@@ -120,6 +120,50 @@ A route along with it's controller can be a module, a factory can be a module, a
 
 **Resolutions**
 
+Route resolutions, properties of the `resolve` object in a route's configuration, run logic on entrance of a new view or route. They can be particularly useful if most of your controller logic depends on data returned from the api, protecting from repeated code, watchers, and logic wrapped in callbacks. We generally write a single service that corresponsds to a single `resolve` property. Be mindful that a view will not render until all of its resolutions are resolved, so keep resolution services slim, and only return the data you need. Requests for data that can wait until the view is rendered are best kept in a controller.
+
+Generally, the data resolved takes the name of the resolve service, suffixed with `Data`.
+
+``` javascript
+// GOOD slim service, slim resolve
+.service('UserResolve', ['$q', 'User',
+  function($q, User) {
+    return function() {
+      var deferred = $q.defer();
+      var req = {
+        id: 1
+      };
+      User.get(req).then(function(success) {
+        deferred.resolve(success);
+      }, function(failure) {
+        deferred.reject(failure);
+      });
+      return deferred.promise;
+    };
+  }
+])
+
+$routeProvider
+  .when(swRouteProvider.someRoute, {
+    templateUrl: 'template.html',
+    controller: 'SomeCtrl',
+    resolve: {
+      UserResolveData: ['UserResolve', function(UserResolve) {
+        return UserResolve();
+      }]
+    }
+  })
+  
+.controller('SomeCtrl', ['UserResolveData',
+  function(UserResolveData) {
+    var ctrl = this;
+    // Yay! I have already have data!
+    ctrl.user = UserResolveData;
+  }
+])
+  
+```
+
 **ControllerAs**
 
 ****
